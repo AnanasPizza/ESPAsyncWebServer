@@ -1,19 +1,15 @@
 /*
   Asynchronous WebServer library for Espressif MCUs
-
   Copyright (c) 2016 Hristo Gochkov. All rights reserved.
   This file is part of the esp8266 core for Arduino environment.
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
   version 2.1 of the License, or (at your option) any later version.
-
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -24,18 +20,7 @@
 #include <libb64/cencode.h>
 
 #ifndef ESP8266
-extern "C" {
-typedef struct {
-    uint32_t state[5];
-    uint32_t count[2];
-    unsigned char buffer[64];
-} SHA1_CTX;
-
-void SHA1Transform(uint32_t state[5], const unsigned char buffer[64]);
-void SHA1Init(SHA1_CTX* context);
-void SHA1Update(SHA1_CTX* context, const unsigned char* data, uint32_t len);
-void SHA1Final(unsigned char digest[20], SHA1_CTX* context);
-}
+#include "mbedtls/sha1.h"
 #else
 #include <Hash.h>
 #endif
@@ -475,8 +460,8 @@ AsyncWebSocketMultiMessage::~AsyncWebSocketMultiMessage() {
  const size_t AWSC_PING_PAYLOAD_LEN = 22;
 
 AsyncWebSocketClient::AsyncWebSocketClient(AsyncWebServerRequest *request, AsyncWebSocket *server)
-  : _controlQueue(LinkedList<AsyncWebSocketControl *>([](AsyncWebSocketControl *c){ delete  c; }))
-  , _messageQueue(LinkedList<AsyncWebSocketMessage *>([](AsyncWebSocketMessage *m){ delete  m; }))
+  : _controlQueue(ESPAsyncWebServer::LinkedList<AsyncWebSocketControl *>([](AsyncWebSocketControl *c){ delete  c; }))
+  , _messageQueue(ESPAsyncWebServer::LinkedList<AsyncWebSocketMessage *>([](AsyncWebSocketMessage *m){ delete  m; }))
   , _tempObject(NULL)
 {
   _client = request->client();
@@ -860,10 +845,10 @@ uint16_t AsyncWebSocketClient::remotePort() {
 
 AsyncWebSocket::AsyncWebSocket(const String& url)
   :_url(url)
-  ,_clients(LinkedList<AsyncWebSocketClient *>([](AsyncWebSocketClient *c){ delete c; }))
+  ,_clients(ESPAsyncWebServer::LinkedList<AsyncWebSocketClient *>([](AsyncWebSocketClient *c){ delete c; }))
   ,_cNextId(1)
   ,_enabled(true)
-  ,_buffers(LinkedList<AsyncWebSocketMessageBuffer *>([](AsyncWebSocketMessageBuffer *b){ delete b; }))
+  ,_buffers(ESPAsyncWebServer::LinkedList<AsyncWebSocketMessageBuffer *>([](AsyncWebSocketMessageBuffer *b){ delete b; }))
 {
   _eventHandler = NULL;
 }
@@ -1268,10 +1253,12 @@ AsyncWebSocketResponse::AsyncWebSocketResponse(const String& key, AsyncWebSocket
   sha1(key + WS_STR_UUID, hash);
 #else
   (String&)key += WS_STR_UUID;
-  SHA1_CTX ctx;
-  SHA1Init(&ctx);
-  SHA1Update(&ctx, (const unsigned char*)key.c_str(), key.length());
-  SHA1Final(hash, &ctx);
+  mbedtls_sha1_context ctx;
+  mbedtls_sha1_init(&ctx);
+  mbedtls_sha1_starts_ret(&ctx);
+  mbedtls_sha1_update_ret(&ctx, (const unsigned char*)key.c_str(), key.length());
+  mbedtls_sha1_finish_ret(&ctx, hash);
+  mbedtls_sha1_free(&ctx);
 #endif
   base64_encodestate _state;
   base64_init_encodestate(&_state);
