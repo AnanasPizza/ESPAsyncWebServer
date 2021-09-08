@@ -16,6 +16,7 @@
 */
 #ifndef STRINGARRAY_H_
 #define STRINGARRAY_H_
+
 #include "stddef.h"
 #include "WString.h"
 
@@ -30,6 +31,7 @@ class LinkedListNode {
     const T& value() const { return _value; };
     T& value(){ return _value; }
 };
+
 template <typename T, template<typename> class Item = LinkedListNode>
 class LinkedList {
   public:
@@ -39,6 +41,7 @@ class LinkedList {
   private:
     ItemType* _root;
     OnRemove _onRemove;
+
     class Iterator {
       ItemType* _node;
     public:
@@ -54,6 +57,7 @@ class LinkedList {
     typedef const Iterator ConstIterator;
     ConstIterator begin() const { return ConstIterator(_root); }
     ConstIterator end() const { return ConstIterator(nullptr); }
+
     LinkedList(OnRemove onRemove) : _root(nullptr), _onRemove(onRemove) {}
     ~LinkedList(){}
     void add(const T& t){
@@ -163,6 +167,8 @@ class LinkedList {
       _root = nullptr;
     }
 };
+
+
 class StringArray : public LinkedList<String> {
 public:
   
