@@ -1,19 +1,15 @@
 /*
   Asynchronous WebServer library for Espressif MCUs
-
   Copyright (c) 2016 Hristo Gochkov. All rights reserved.
   This file is part of the esp8266 core for Arduino environment.
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
   version 2.1 of the License, or (at your option) any later version.
-
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -161,8 +157,8 @@ class AsyncWebSocketClient {
     uint32_t _clientId;
     AwsClientStatus _status;
 
-    LinkedList<AsyncWebSocketControl *> _controlQueue;
-    LinkedList<AsyncWebSocketMessage *> _messageQueue;
+    ESPAsyncWebServer::LinkedList<AsyncWebSocketControl *> _controlQueue;
+    ESPAsyncWebServer::LinkedList<AsyncWebSocketMessage *> _messageQueue;
 
     uint8_t _pstate;
     AwsFrameInfo _pinfo;
@@ -242,7 +238,7 @@ typedef std::function<void(AsyncWebSocket * server, AsyncWebSocketClient * clien
 //WebServer Handler implementation that plays the role of a socket server
 class AsyncWebSocket: public AsyncWebHandler {
   public:
-    typedef LinkedList<AsyncWebSocketClient *> AsyncWebSocketClientLinkedList;
+    typedef ESPAsyncWebServer::LinkedList<AsyncWebSocketClient *> AsyncWebSocketClientLinkedList;
   private:
     String _url;
     AsyncWebSocketClientLinkedList _clients;
@@ -328,7 +324,7 @@ class AsyncWebSocket: public AsyncWebHandler {
     //  messagebuffer functions/objects. 
     AsyncWebSocketMessageBuffer * makeBuffer(size_t size = 0); 
     AsyncWebSocketMessageBuffer * makeBuffer(uint8_t * data, size_t size); 
-    LinkedList<AsyncWebSocketMessageBuffer *> _buffers;
+    ESPAsyncWebServer::LinkedList<AsyncWebSocketMessageBuffer *> _buffers;
     void _cleanBuffers(); 
 
     AsyncWebSocketClientLinkedList getClients() const;
