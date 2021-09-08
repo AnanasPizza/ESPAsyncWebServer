@@ -1,29 +1,25 @@
 /*
   Asynchronous WebServer library for Espressif MCUs
-
   Copyright (c) 2016 Hristo Gochkov. All rights reserved.
   This file is part of the esp8266 core for Arduino environment.
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
   version 2.1 of the License, or (at your option) any later version.
-
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #ifndef STRINGARRAY_H_
 #define STRINGARRAY_H_
-
 #include "stddef.h"
 #include "WString.h"
 
+namespace ESPAsyncWebServer{
 template <typename T>
 class LinkedListNode {
     T _value;
@@ -34,7 +30,6 @@ class LinkedListNode {
     const T& value() const { return _value; };
     T& value(){ return _value; }
 };
-
 template <typename T, template<typename> class Item = LinkedListNode>
 class LinkedList {
   public:
@@ -44,7 +39,6 @@ class LinkedList {
   private:
     ItemType* _root;
     OnRemove _onRemove;
-
     class Iterator {
       ItemType* _node;
     public:
@@ -60,7 +54,6 @@ class LinkedList {
     typedef const Iterator ConstIterator;
     ConstIterator begin() const { return ConstIterator(_root); }
     ConstIterator end() const { return ConstIterator(nullptr); }
-
     LinkedList(OnRemove onRemove) : _root(nullptr), _onRemove(onRemove) {}
     ~LinkedList(){}
     void add(const T& t){
@@ -170,8 +163,6 @@ class LinkedList {
       _root = nullptr;
     }
 };
-
-
 class StringArray : public LinkedList<String> {
 public:
   
@@ -187,6 +178,7 @@ public:
   }
 };
 
+}
 
 
 
