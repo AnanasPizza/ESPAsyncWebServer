@@ -1,19 +1,15 @@
 /*
   Asynchronous WebServer library for Espressif MCUs
-
   Copyright (c) 2016 Hristo Gochkov. All rights reserved.
   This file is part of the esp8266 core for Arduino environment.
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
   version 2.1 of the License, or (at your option) any later version.
-
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -134,6 +130,7 @@ typedef std::function<String(const String&)> AwsTemplateProcessor;
 class AsyncWebServerRequest {
   using File = fs::File;
   using FS = fs::FS;
+  using StringArray = ESPAsyncWebServer::StringArray;
   friend class AsyncWebServer;
   friend class AsyncCallbackWebHandler;
   private:
@@ -163,9 +160,9 @@ class AsyncWebServerRequest {
     size_t _contentLength;
     size_t _parsedLength;
 
-    LinkedList<AsyncWebHeader *> _headers;
-    LinkedList<AsyncWebParameter *> _params;
-    LinkedList<String *> _pathParams;
+    ESPAsyncWebServer::LinkedList<AsyncWebHeader *> _headers;
+    ESPAsyncWebServer::LinkedList<AsyncWebParameter *> _params;
+    ESPAsyncWebServer::LinkedList<String *> _pathParams;
 
     uint8_t _multiParseState;
     uint8_t _boundaryPosition;
@@ -358,7 +355,7 @@ typedef enum {
 class AsyncWebServerResponse {
   protected:
     int _code;
-    LinkedList<AsyncWebHeader *> _headers;
+    ESPAsyncWebServer::LinkedList<AsyncWebHeader *> _headers;
     String _contentType;
     size_t _contentLength;
     bool _sendContentLength;
@@ -397,8 +394,8 @@ typedef std::function<void(AsyncWebServerRequest *request, uint8_t *data, size_t
 class AsyncWebServer {
   protected:
     AsyncServer _server;
-    LinkedList<AsyncWebRewrite*> _rewrites;
-    LinkedList<AsyncWebHandler*> _handlers;
+    ESPAsyncWebServer::LinkedList<AsyncWebRewrite*> _rewrites;
+    ESPAsyncWebServer::LinkedList<AsyncWebHandler*> _handlers;
     AsyncCallbackWebHandler* _catchAllHandler;
 
   public:
@@ -439,7 +436,7 @@ class AsyncWebServer {
 };
 
 class DefaultHeaders {
-  using headers_t = LinkedList<AsyncWebHeader *>;
+  using headers_t = ESPAsyncWebServer::LinkedList<AsyncWebHeader *>;
   headers_t _headers;
   
   DefaultHeaders()
